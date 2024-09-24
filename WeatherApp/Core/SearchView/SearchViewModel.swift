@@ -46,10 +46,12 @@ class SearchViewModel: ObservableObject {
             .filter { !$0.isEmpty }
             .removeDuplicates()
         //the debounce could be shorter, but I'm trying to save the free API calls :)
-            .debounce(for: .seconds(2), scheduler: RunLoop.main)
+            .debounce(for: .seconds(1), scheduler: RunLoop.main)
             .sink { [weak self] receivedText in
+                self?.locations = []
                 if receivedText.count >= 3 {
-                    self?.locationsDataService.fetchLocations(searchQuery: receivedText)
+                    let formatedReceivedText = TypeConvertation.formatCityName(receivedText)
+                    self?.locationsDataService.fetchLocations(searchQuery: formatedReceivedText)
                 }
             }
             .store(in: &cancellables)
