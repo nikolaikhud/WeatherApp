@@ -6,16 +6,29 @@
 //
 
 import Foundation
+import Combine
 import CoreLocation
 
-final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject {
+protocol LocationManagerProtocol {
+    var lastKnownLocation: CLLocationCoordinate2D? { get }
+    var lastKnownLocationPublisher: Published<CLLocationCoordinate2D?>.Publisher { get }
+    var manager: CLLocationManager { get }
+    var authorizationStatus: CLAuthorizationStatus { get }
+}
+
+class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject, LocationManagerProtocol {
+    var authorizationStatus: CLAuthorizationStatus = .notDetermined
     
     @Published var lastKnownLocation: CLLocationCoordinate2D?
+    var lastKnownLocationPublisher: Published<CLLocationCoordinate2D?>.Publisher { $lastKnownLocation }
     var manager = CLLocationManager()
     let viewState = SharedViewState.shared
     
+    init(authorizationStatus: CLAuthorizationStatus = .authorizedWhenInUse) {
+        self.authorizationStatus = authorizationStatus
+    }
+    
     func checkLocationAuthorization() {
-        viewState.state = .loading
         manager.delegate = self
         manager.startUpdatingLocation()
         
@@ -40,7 +53,6 @@ final class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObje
         if let location = locations.first {
             lastKnownLocation = location.coordinate
             manager.stopUpdatingLocation()
-            self.viewState.dismissLoadingWithAsync()
         }
     }
 }

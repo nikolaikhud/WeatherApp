@@ -8,10 +8,19 @@
 import Foundation
 import Combine
 
-class ForecastWeatherDataService {
+protocol ForecastDataServiceProtocol {
+    var forecastWeatherItemsList: ForecastWeatherItemsAPI? { get }
+    var forecastWeatherItemsListPublisher: Published<ForecastWeatherItemsAPI?>.Publisher { get }
+    
+    func fetchForecast(lat: Double, lon: Double)
+}
+
+class ForecastDataService: ForecastDataServiceProtocol {
     @Published var forecastWeatherItemsList: ForecastWeatherItemsAPI?
     var forecastSubscription: AnyCancellable?
     let viewState = SharedViewState.shared
+    
+    var forecastWeatherItemsListPublisher: Published<ForecastWeatherItemsAPI?>.Publisher { $forecastWeatherItemsList }
     
     func fetchForecast(lat: Double, lon: Double) {
         

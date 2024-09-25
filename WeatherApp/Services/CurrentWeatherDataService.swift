@@ -8,12 +8,23 @@
 import Foundation
 import Combine
 
+protocol CurrentWeatherDataServiceProtocol {
+    var currentWeather: CurrentWeatherAPI? { get }
+    var currentWeatherPublisher: Published<CurrentWeatherAPI?>.Publisher { get }
+    
+    func fetchWeather(lat: Double, lon: Double)
+    
+    func fetchWeatherPublisher(lat: Double, lon: Double) -> AnyPublisher<CurrentWeatherAPI, Error>
+    
+    func fetchWeather(weatherPublisher: AnyPublisher<(weather: CurrentWeatherAPI, search: Location), any Error>, completion: @escaping (CurrentWeatherAPI, Location) -> ())
+}
 
-class CurrentWeatherDataService {
+class CurrentWeatherDataService: CurrentWeatherDataServiceProtocol {
     @Published var currentWeather: CurrentWeatherAPI?
-    var weatherSubscription: AnyCancellable?
     private var cancellables = Set<AnyCancellable>()
     let viewState = SharedViewState.shared
+    
+    var currentWeatherPublisher: Published<CurrentWeatherAPI?>.Publisher { $currentWeather }
     
     func fetchWeather(lat: Double, lon: Double) {
         
@@ -21,7 +32,7 @@ class CurrentWeatherDataService {
         
         let url = NetworkingUtilities.getURL(endpoint: .weather, lat: lat, lon: lon, units: .imperial, appid: Constants.APIKey)
         
-        weatherSubscription = URLSession.shared.dataTaskPublisher(for: url)
+        URLSession.shared.dataTaskPublisher(for: url)
             .receive(on: DispatchQueue.main)
             .map { $0.data }
             .decode(type: CurrentWeatherAPI.self, decoder: JSONDecoder())
@@ -36,6 +47,7 @@ class CurrentWeatherDataService {
                 self?.currentWeather = weather
                 self?.viewState.dismissLoadingWithAsync()
             }
+            .store(in: &cancellables)
     }
 }
 

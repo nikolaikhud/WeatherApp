@@ -8,12 +8,26 @@
 import Foundation
 import Combine
 
-class LocationsDataService {
+protocol LocationDataServiceProtocol {
+    var fetchedLocations: [Location] { get }
+    var fetchedLocationsPublisher: Published<[Location]>.Publisher { get }
+    var fetchedLocation: Location? { get }
+    var fetchedLocationPublisher: Published<Location?>.Publisher { get }
+    
+    func fetchLocations(searchQuery: String)
+    
+    func fetchLocation(lat: Double, lon: Double)
+}
+
+class LocationsDataService: LocationDataServiceProtocol {
     
     @Published var fetchedLocations: [Location] = []
     @Published var fetchedLocation: Location?
     private var cancellables = Set<AnyCancellable>()
     let viewState = SharedViewState.shared
+    
+    var fetchedLocationsPublisher: Published<[Location]>.Publisher { $fetchedLocations }
+    var fetchedLocationPublisher: Published<Location?>.Publisher { $fetchedLocation }
     
     func fetchLocations(searchQuery: String) {
         

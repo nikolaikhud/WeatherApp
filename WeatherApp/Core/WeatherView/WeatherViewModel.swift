@@ -11,15 +11,28 @@ import CoreLocation
 
 class WeatherViewModel: ObservableObject {
     
-    private var locationManager: LocationManager
+    private let locationManager: LocationManagerProtocol
+    private let locationsDataService: LocationDataServiceProtocol
+    private let currentWeatherDataService: CurrentWeatherDataServiceProtocol
+    private let forecastDataService: ForecastDataServiceProtocol
+    private let recentSearchesDataService: RecentSearchesDataServiceProtocol
     
     @Published var weather: CurrentWeatherUI?
     @Published var forecast: [ForecastWeatherItemUI] = []
     @Published var cityState = "–"
     @Published var tempString: String?
     
-    init(locationManager: LocationManager) {
+    init(locationManager: LocationManagerProtocol = LocationManager(),
+         locationsDataService: LocationDataServiceProtocol = LocationsDataService(),
+         currentWeatherDataService: CurrentWeatherDataServiceProtocol = CurrentWeatherDataService(),
+         forecastDataService: ForecastDataServiceProtocol = ForecastDataService(),
+         recentSearchesDataService: RecentSearchesDataServiceProtocol = RecentSearchesDataService.shared)
+    {
         self.locationManager = locationManager
+        self.locationsDataService = locationsDataService
+        self.currentWeatherDataService = currentWeatherDataService
+        self.forecastDataService = forecastDataService
+        self.recentSearchesDataService = recentSearchesDataService
         addSubscribers()
         shouldWeatherBeUpdated()
     }
@@ -34,14 +47,11 @@ class WeatherViewModel: ObservableObject {
         locationSubscriber()
     }
     
-    private let currentWeatherDataService = CurrentWeatherDataService()
-    private let forecastDataService = ForecastWeatherDataService()
-    private let locationsDataService = LocationsDataService()
-    private let recentSearchesDataService = RecentSearchesDataService.shared
+//    private let recentSearchesDataService = RecentSearchesDataService.shared
     private var cancellables = Set<AnyCancellable>()
     
     private func lastKnownLocationSubscriber() {
-        locationManager.$lastKnownLocation
+        locationManager.lastKnownLocationPublisher
             .filter { $0 != nil }
             .first()
             .sink { [weak self] receivedLocation in
@@ -52,8 +62,8 @@ class WeatherViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    private func currentWeatherSubscriber() {
-        currentWeatherDataService.$currentWeather
+    func currentWeatherSubscriber() {
+        currentWeatherDataService.currentWeatherPublisher
             .filter { $0 != nil }
             .sink { [weak self] receivedWeather in
                 if let receivedWeather = receivedWeather {
@@ -66,7 +76,7 @@ class WeatherViewModel: ObservableObject {
     }
     
     private func locationSubscriber() {
-        locationsDataService.$fetchedLocation
+        locationsDataService.fetchedLocationPublisher
             .filter { $0 != nil }
             .sink { [weak self] receivedLocation in
                 if let receivedLocation = receivedLocation {
@@ -77,7 +87,7 @@ class WeatherViewModel: ObservableObject {
     }
     
     private func forecastSubscriber() {
-        forecastDataService.$forecastWeatherItemsList
+        forecastDataService.forecastWeatherItemsListPublisher
             .filter { $0 != nil }
             .sink { [weak self] receivedForecast in
                 if let receivedForecast = receivedForecast {
@@ -123,6 +133,17 @@ class WeatherViewModel: ObservableObject {
         
         return result
     }
+    
+//    private func shouldWeatherBeUpdated() {
+//        if locationManager.authorizationStatus == .authorizedWhenInUse ||
+//            locationManager.authorizationStatus == .authorizedAlways
+//        {
+//            // Do nothing
+//        } else if let search = recentSearchesDataService.recentSearches.last {
+//            // Update with recent search
+//            updateWeather(name: search.name ?? "", state: search.state ?? "", lat: search.lat, lon: search.lon)
+//        }
+//    }
     
     private func shouldWeatherBeUpdated() {
         if locationManager.manager.authorizationStatus == .authorizedWhenInUse ||

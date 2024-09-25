@@ -33,6 +33,9 @@ struct WeatherView: View {
                     }
                 }
             }
+            if coordinator.globalViewState.isLoading {
+                LoadingView()
+            }
         }
         .fullScreenCover(isPresented: $coordinator.isShowingSearchView) {
             if let searchViewModel = coordinator.searchViewModel {

@@ -8,11 +8,19 @@
 import Foundation
 import CoreData
 
-class RecentSearchesDataService {
+protocol RecentSearchesDataServiceProtocol {
+    var recentSearches: [RecentSearch] { get }
+    var recentSearchesPublisher: Published<[RecentSearch]>.Publisher { get }
+    
+    func updateRecentSearches(with search: Location)
+}
+
+class RecentSearchesDataService: RecentSearchesDataServiceProtocol {
     
     public static let shared = RecentSearchesDataService()
     
     @Published var recentSearches: [RecentSearch] = []
+    var recentSearchesPublisher: Published<[RecentSearch]>.Publisher { $recentSearches }
     
     private let container: NSPersistentContainer
     private let containerName = "RecentSearchContainer"

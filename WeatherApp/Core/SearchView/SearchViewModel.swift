@@ -9,12 +9,24 @@ import Foundation
 import Combine
 
 class SearchViewModel: ObservableObject {
+    
+    private let locationsDataService: LocationDataServiceProtocol
+    private let recentSearchesDataService: RecentSearchesDataServiceProtocol
+    private let currentWeatherDataService: CurrentWeatherDataServiceProtocol
+    private let debounceTime: Int
+    
     @Published var locations: [Location] = []
     @Published var searchText: String = ""
     @Published var recentSearchesCurrentWeather: [RecentSearchCurrentWeather] = []
     var recentSearchesLocation: [Location] = []
     
-    init() {
+    init(locationsDataService: LocationDataServiceProtocol = LocationsDataService(),
+         recentSearchesDataService: RecentSearchesDataServiceProtocol = RecentSearchesDataService.shared,
+         currentWeatherDataService: CurrentWeatherDataServiceProtocol = CurrentWeatherDataService(), debounceTime: Int = 1) {
+        self.locationsDataService = locationsDataService
+        self.recentSearchesDataService = recentSearchesDataService
+        self.currentWeatherDataService = currentWeatherDataService
+        self.debounceTime = debounceTime
         addSubscribers()
     }
     
@@ -27,13 +39,13 @@ class SearchViewModel: ObservableObject {
         recentSearchesSubscriber()
     }
     
-    private let locationsDataService = LocationsDataService()
-    private let recentSearchesDataService = RecentSearchesDataService.shared
-    private let currentWeatherDataService = CurrentWeatherDataService()
+//    private let locationsDataService = LocationsDataService()
+//    private let recentSearchesDataService = RecentSearchesDataService.shared
+//    private let currentWeatherDataService = CurrentWeatherDataService()
     private var cancellables = Set<AnyCancellable>()
     
     private func locationsSubscriber() {
-        locationsDataService.$fetchedLocations
+        locationsDataService.fetchedLocationsPublisher
             .filter { !$0.isEmpty }
             .sink { [weak self] receivedLocations in
                 self?.locations = receivedLocations
@@ -46,7 +58,7 @@ class SearchViewModel: ObservableObject {
             .filter { !$0.isEmpty }
             .removeDuplicates()
         //the debounce could be shorter, but I'm trying to save the free API calls :)
-            .debounce(for: .seconds(1), scheduler: RunLoop.main)
+            .debounce(for: .seconds(debounceTime), scheduler: RunLoop.main)
             .sink { [weak self] receivedText in
                 self?.locations = []
                 if receivedText.count >= 3 {
@@ -58,7 +70,7 @@ class SearchViewModel: ObservableObject {
     }
     
     private func recentSearchesSubscriber() {
-        recentSearchesDataService.$recentSearches
+        recentSearchesDataService.recentSearchesPublisher
             .filter { !$0.isEmpty }
             .map { recentSearches -> [Location] in
                 recentSearches
