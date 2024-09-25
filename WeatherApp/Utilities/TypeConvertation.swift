@@ -153,7 +153,6 @@ struct TypeConvertation {
             "sanfernando": "San Fernando"
         ]
         
-        print(knownCityNames[cityName.lowercased()] as Any)
         return knownCityNames[cityName.lowercased()] ?? cityName
     }
 }

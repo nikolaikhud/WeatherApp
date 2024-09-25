@@ -19,8 +19,8 @@ struct SearchView: View {
                 .ignoresSafeArea()
             
             VStack {
-                SearchBarView(searchText: $viewModel.searchText)
-                    .padding(.vertical, 20)
+                dismissButton
+                SearchBarRepresentable(text: $viewModel.searchText, placeholder: "Enter the full city name", autoFocus: true)
                 
                 if viewModel.searchText.isEmpty {
                     recentSearches
@@ -46,6 +46,23 @@ struct SearchView: View {
 }
 
 extension SearchView {
+    private var dismissButton: some View {
+        Group {
+            HStack {
+                Spacer()
+                Button(action: {
+                    coordinator.hideSearchView()
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .resizable()
+                        .frame(width: 20,height: 20)
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(Color.accent, Color(UIColor.systemGray3))
+                }
+            }
+        }
+    }
+    
     private var recentSearches: some View {
         VStack {
             Text("Recent Searches")

@@ -38,6 +38,7 @@
 		73FFBD7C2CA0E33A00C3784F /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FFBD7B2CA0E33A00C3784F /* LocationManager.swift */; };
 		73FFBD7E2CA1317300C3784F /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FFBD7D2CA1317300C3784F /* LoadingView.swift */; };
 		73FFBD862CA13EC900C3784F /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = 73FFBD852CA13EC900C3784F /* Secrets.plist */; };
+		73FFBD8A2CA3646100C3784F /* SearchButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FFBD892CA3646100C3784F /* SearchButtonView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +94,7 @@
 		73FFBD7B2CA0E33A00C3784F /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		73FFBD7D2CA1317300C3784F /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		73FFBD852CA13EC900C3784F /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Secrets.plist; path = "WeatherApp/Supporting Files/Secrets.plist"; sourceTree = SOURCE_ROOT; };
+		73FFBD892CA3646100C3784F /* SearchButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchButtonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -275,6 +277,7 @@
 				7320F6A32C9BC42400289A66 /* WeatherView.swift */,
 				7320F6CC2C9C89A100289A66 /* AdditionalParameterView.swift */,
 				73C931262C9F84070075A9D4 /* AsyncURLImage.swift */,
+				73FFBD892CA3646100C3784F /* SearchButtonView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -448,6 +451,7 @@
 				7320F6D92C9CED7900289A66 /* LocationsDataService.swift in Sources */,
 				73FFBD7E2CA1317300C3784F /* LoadingView.swift in Sources */,
 				73C9311D2C9F33FA0075A9D4 /* CurrentWeather.swift in Sources */,
+				73FFBD8A2CA3646100C3784F /* SearchButtonView.swift in Sources */,
 				7320F6A42C9BC42400289A66 /* WeatherView.swift in Sources */,
 				73FFBD7C2CA0E33A00C3784F /* LocationManager.swift in Sources */,
 				7320F6A22C9BC42400289A66 /* WeatherAppApp.swift in Sources */,

@@ -12,45 +12,41 @@ struct WeatherView: View {
     @ObservedObject var viewModel: WeatherViewModel
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color(UIColor.systemGray6)
-                    .ignoresSafeArea()
-                VStack {
-                    searchButton
-                        .padding(.horizontal, 34)
-                    if (viewModel.weather == nil) {
-                        placeholder
-                    } else {
-                        ScrollView {
-                            VStack (spacing: 12) {
-                                mainWeatherView
-                                forecastView
-                                additioanlDataView
-                                Spacer()
-                            }
-                            .padding(.horizontal, 34)
+        ZStack {
+            Color(UIColor.systemGray6)
+                .ignoresSafeArea()
+            VStack {
+                searchButton
+                    .padding(.horizontal, 34)
+                
+                if (viewModel.weather == nil) {
+                    placeholder
+                } else {
+                    ScrollView {
+                        VStack (spacing: 12) {
+                            mainWeatherView
+                            forecastView
+                            additioanlDataView
+                            Spacer()
                         }
+                        .padding(.horizontal, 34)
                     }
                 }
-                if coordinator.globalViewState.isLoading {
-                    LoadingView()
+            }
+        }
+        .fullScreenCover(isPresented: $coordinator.isShowingSearchView) {
+            if let searchViewModel = coordinator.searchViewModel {
+                SearchView(viewModel: searchViewModel)
+            }
+        }
+        .alert(isPresented: .constant(coordinator.globalViewState.error != nil)) {
+            Alert(
+                title: Text("Error"),
+                message: Text(coordinator.globalViewState.error ?? "Unknown error"),
+                dismissButton: .default(Text("OK")) {
+                    coordinator.globalViewState = .idle
                 }
-            }
-            .navigationDestination(isPresented: $coordinator.isShowingSearchView) {
-                if let searchViewModel = coordinator.searchViewModel {
-                    SearchView(viewModel: searchViewModel)
-                }
-            }
-            .alert(isPresented: .constant(coordinator.globalViewState.error != nil)) {
-                Alert(
-                    title: Text("Error"),
-                    message: Text(coordinator.globalViewState.error ?? "Unknown error"),
-                    dismissButton: .default(Text("OK")) {
-                        coordinator.globalViewState = .idle
-                    }
-                )
-            }
+            )
         }
     }
 }
@@ -59,25 +55,10 @@ struct WeatherView: View {
 extension WeatherView {
     
     private var searchButton: some View {
-        Button(action: {
+        SearchButtonWrapper {
             coordinator.showSearchView()
-        }, label: {
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 14, height: 14)
-                    .padding(.leading, 12)
-                Text("Search by city/town name")
-                    .font(.system(size: 14))
-                Spacer()
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
-            .foregroundStyle(.gray)
-            .background(Color(UIColor.systemGray5))
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-        })
+        }
+        .frame(height: 36)
         .padding(.top, 28)
         .padding(.bottom, 16)
     }
