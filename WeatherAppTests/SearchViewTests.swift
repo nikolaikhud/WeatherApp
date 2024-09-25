@@ -72,7 +72,6 @@ class SearchViewModelTests: XCTestCase {
         ]
         let expectation = XCTestExpectation(description: "ViewModel.locations should be updated")
         
-        // Subscribe to viewModel.locations
         viewModel.$locations
             .dropFirst()
             .sink { locations in

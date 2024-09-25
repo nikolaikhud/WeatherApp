@@ -134,24 +134,13 @@ class WeatherViewModel: ObservableObject {
         return result
     }
     
-//    private func shouldWeatherBeUpdated() {
-//        if locationManager.authorizationStatus == .authorizedWhenInUse ||
-//            locationManager.authorizationStatus == .authorizedAlways
-//        {
-//            // Do nothing
-//        } else if let search = recentSearchesDataService.recentSearches.last {
-//            // Update with recent search
-//            updateWeather(name: search.name ?? "", state: search.state ?? "", lat: search.lat, lon: search.lon)
-//        }
-//    }
-    
     private func shouldWeatherBeUpdated() {
-        if locationManager.manager.authorizationStatus == .authorizedWhenInUse ||
-            locationManager.manager.authorizationStatus == .authorizedAlways
+        if locationManager.authorizationStatus == .authorizedWhenInUse ||
+            locationManager.authorizationStatus == .authorizedAlways
         {
-            // do nothing — lastKnownLocationSubscriber will pickup the currnet user's location and the WeatherView will be updated
+            // Do nothing
         } else if let search = recentSearchesDataService.recentSearches.last {
-            // if there is any recent search in memory then update the WeatherView with it
+            // Update with recent search
             updateWeather(name: search.name ?? "", state: search.state ?? "", lat: search.lat, lon: search.lon)
         }
     }
