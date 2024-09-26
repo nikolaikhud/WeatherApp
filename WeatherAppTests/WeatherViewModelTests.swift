@@ -199,7 +199,7 @@ class WeatherViewModelTests: XCTestCase {
         viewModel.updateWeather(with: location)
 
         // Then
-        XCTAssertEqual(viewModel.cityState, "\(location.name), \(location.state)")
+        XCTAssertEqual(viewModel.cityState, location.cityState)
         XCTAssertTrue(mockCurrentWeatherDataService.fetchWeatherCalled)
         XCTAssertEqual(mockCurrentWeatherDataService.fetchWeatherLat, location.lat)
         XCTAssertEqual(mockCurrentWeatherDataService.fetchWeatherLon, location.lon)
@@ -215,6 +215,7 @@ class WeatherViewModelTests: XCTestCase {
         let state = "Test State"
         let lat = 12.34
         let lon = 56.78
+//        let cityState = "\(name), \(state)"
         
         let location = Location(
             name: name,
@@ -228,7 +229,7 @@ class WeatherViewModelTests: XCTestCase {
         mockForecastDataService.fetchForecastCalled = false
 
         // When
-        viewModel.updateWeather(name: name, state: state, lat: lat, lon: lon)
+        viewModel.updateWeather(name: name, state: state, cityState: location.cityState, lat: lat, lon: lon)
 
         // Then
         XCTAssertEqual(viewModel.cityState, "\(name), \(state)")

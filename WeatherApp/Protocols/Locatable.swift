@@ -9,7 +9,8 @@ import Foundation
 
 protocol Locatable {
     var name: String { get }
-    var state: String { get }
+    var state: String? { get }
     var lat: Double { get }
     var lon: Double { get }
+    var cityState: String { get }
 }

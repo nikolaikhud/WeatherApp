@@ -43,8 +43,10 @@ class LocationsDataService: LocationDataServiceProtocol {
             .sink { [weak self] completion in
                 switch completion {
                 case .finished:
+                    print(url)
                     break
                 case .failure(let error):
+                    print(url)
                     self?.viewState.state = .error(message: error.localizedDescription)
                 }
             } receiveValue: { [weak self] locations in

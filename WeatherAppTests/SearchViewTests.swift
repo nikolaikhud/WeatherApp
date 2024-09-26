@@ -48,7 +48,7 @@ class SearchViewModelTests: XCTestCase {
     
     func testSearchTextUpdatesFetchLocations() {
         // Given
-        let formattedText = TypeConvertation.formatCityName("San")
+        let formattedText = SearchInputHandler.formatCityInput(for: "San")
         let expectation = XCTestExpectation(description: "fetchLocations should be called")
 
         // When

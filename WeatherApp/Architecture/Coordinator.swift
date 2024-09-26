@@ -34,7 +34,7 @@ class AppCoordinator: ObservableObject {
     }
     
     func updateWeather<T: Locatable>(with data: T) {
-            weatherViewModel.updateWeather(name: data.name, state: data.state, lat: data.lat, lon: data.lon)
+        weatherViewModel.updateWeather(name: data.name, state: data.state ?? "", cityState: data.cityState, lat: data.lat, lon: data.lon)
     }
     
     // MARK: shared view state

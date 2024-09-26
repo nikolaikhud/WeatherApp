@@ -12,9 +12,17 @@ struct Location: Codable, Identifiable, Equatable, Locatable {
     let name: String
     let lat: Double
     let lon: Double
-    let state: String
+    let state: String?
     
     enum CodingKeys: String, CodingKey {
         case name, lat, lon, state
+    }
+    
+    var cityState: String {
+        if let state {
+            return "\(name), \(state)"
+        } else {
+            return "\(name)"
+        }
     }
 }

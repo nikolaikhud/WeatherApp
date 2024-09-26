@@ -41,7 +41,8 @@ class RecentSearchesDataService: RecentSearchesDataServiceProtocol {
             $0.lat == search.lat &&
             $0.lon == search.lon &&
             $0.name == search.name &&
-            $0.state == search.state
+            $0.state == search.state &&
+            $0.cityState == search.cityState
         }) {
             let existingSearch = recentSearches[index]
             delete(entity: existingSearch)
@@ -62,6 +63,7 @@ class RecentSearchesDataService: RecentSearchesDataServiceProtocol {
         entity.lon = search.lon
         entity.name = search.name
         entity.state = search.state
+        entity.cityState = search.cityState
         
         save()
         getRecentSearches()

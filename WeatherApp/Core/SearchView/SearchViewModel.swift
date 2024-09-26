@@ -62,8 +62,9 @@ class SearchViewModel: ObservableObject {
             .sink { [weak self] receivedText in
                 self?.locations = []
                 if receivedText.count >= 3 {
-                    let formatedReceivedText = TypeConvertation.formatCityName(receivedText)
+                    let formatedReceivedText = SearchInputHandler.formatCityInput(for: receivedText)
                     self?.locationsDataService.fetchLocations(searchQuery: formatedReceivedText)
+                    print(formatedReceivedText)
                 }
             }
             .store(in: &cancellables)

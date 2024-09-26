@@ -80,7 +80,7 @@ class WeatherViewModel: ObservableObject {
             .filter { $0 != nil }
             .sink { [weak self] receivedLocation in
                 if let receivedLocation = receivedLocation {
-                    self?.cityState = "\(receivedLocation.name), \(receivedLocation.state)"
+                    self?.cityState = receivedLocation.cityState
                 }
             }
             .store(in: &cancellables)
@@ -104,15 +104,16 @@ class WeatherViewModel: ObservableObject {
     // Updating logic for the main ViewModel's property — 'weather'
     
     func updateWeather(with location: Location) {
-        cityState = "\(location.name), \(location.state)"
+        cityState = location.cityState
+
         let lat = location.lat
         let lon = location.lon
         currentWeatherDataService.fetchWeather(lat: lat, lon: lon)
         forecastDataService.fetchForecast(lat: lat, lon: lon)
     }
     
-    func updateWeather(name: String, state: String, lat: Double, lon: Double) {
-        cityState = "\(name), \(state)"
+    func updateWeather(name: String, state: String, cityState: String, lat: Double, lon: Double) {
+        self.cityState = cityState
         currentWeatherDataService.fetchWeather(lat: lat, lon: lon)
         forecastDataService.fetchForecast(lat: lat, lon: lon)
     }
@@ -141,7 +142,7 @@ class WeatherViewModel: ObservableObject {
             // Do nothing
         } else if let search = recentSearchesDataService.recentSearches.last {
             // Update with recent search
-            updateWeather(name: search.name ?? "", state: search.state ?? "", lat: search.lat, lon: search.lon)
+            updateWeather(name: search.name ?? "", state: search.state ?? "", cityState: search.cityState ?? "", lat: search.lat, lon: search.lon)
         }
     }
 }

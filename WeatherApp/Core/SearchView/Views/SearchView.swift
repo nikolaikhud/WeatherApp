@@ -24,6 +24,8 @@ struct SearchView: View {
                 
                 if viewModel.searchText.isEmpty {
                     recentSearches
+                } else if viewModel.locations.isEmpty {
+                    placeholder
                 } else {
                     serachResults
                 }
@@ -67,27 +69,34 @@ extension SearchView {
         VStack {
             Text("Recent Searches")
                 .foregroundStyle(.accent)
-                .font(.title)
-            ScrollView {
-                ForEach(viewModel.recentSearchesCurrentWeather) { weather in
-                    Button {
-                        coordinator.updateWeather(with: weather)
-                        coordinator.hideSearchView()
-                    } label: {
-                        HStack {
-                            Text(String(weather.name))
-                                .font(.system(size: 24))
-                                .fontWeight(.bold)
-                            Spacer()
-                            Text("\(weather.temp)")
-                                .font(.system(size: 24))
-                            AsyncURLImage(url: weather.iconURL)
-                                .frame(width: 45, height: 45)
+                .font(.title2)
+            if viewModel.recentSearchesCurrentWeather.isEmpty {
+                Text("Your searches history will be displayed here")
+                    .foregroundStyle(.accent)
+                    .multilineTextAlignment(.leading)
+                Spacer()
+            } else {
+                ScrollView {
+                    ForEach(viewModel.recentSearchesCurrentWeather) { weather in
+                        Button {
+                            coordinator.updateWeather(with: weather)
+                            coordinator.hideSearchView()
+                        } label: {
+                            HStack {
+                                Text(String(weather.name))
+                                    .font(.system(size: 24))
+                                    .fontWeight(.bold)
+                                Spacer()
+                                Text("\(weather.temp)")
+                                    .font(.system(size: 24))
+                                AsyncURLImage(url: weather.iconURL)
+                                    .frame(width: 45, height: 45)
+                            }
+                            .foregroundStyle(.accent)
+                            .padding()
+                            .background(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 20))
                         }
-                        .foregroundStyle(.accent)
-                        .padding()
-                        .background(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
                     }
                 }
             }
@@ -105,7 +114,7 @@ extension SearchView {
                                 coordinator.hideSearchView()
                                 viewModel.updateRecentSearches(with: location)
                             }, label: {
-                                Text("\(location.name), \(location.state)")
+                                Text(location.cityState)
                                     .font(.system(size: 20))
                                     .foregroundStyle(.accent)
                                     .padding(.bottom, 8)
@@ -116,6 +125,17 @@ extension SearchView {
                 }
             }
             .padding(.leading, 8)
+            Spacer()
+        }
+    }
+    
+    private var placeholder: some View {
+        Group {
+            Text("Noting found")
+                .font(.title2)
+                .foregroundStyle(.accent)
+            Text("Ensure your search query has at least 3 letters and matches a valid U.S. city or town name without errors")
+                .foregroundStyle(.accent)
             Spacer()
         }
     }

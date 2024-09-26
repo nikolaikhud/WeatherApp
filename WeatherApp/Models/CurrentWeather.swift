@@ -88,7 +88,15 @@ struct RecentSearchCurrentWeather: Identifiable, Locatable {
     let lat: Double
     let lon: Double
     let name: String
-    let state: String
+    let state: String?
     let temp: String
     let iconURL: URL?
+    
+    var cityState: String {
+        if let state {
+            return "\(name), \(state)"
+        } else {
+            return "\(name)"
+        }
+    }
 }
