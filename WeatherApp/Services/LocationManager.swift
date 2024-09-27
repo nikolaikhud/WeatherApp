@@ -22,15 +22,16 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject, Lo
     @Published var lastKnownLocation: CLLocationCoordinate2D?
     var lastKnownLocationPublisher: Published<CLLocationCoordinate2D?>.Publisher { $lastKnownLocation }
     var manager = CLLocationManager()
-    let viewState = SharedViewState.shared
+//    let viewState = SharedViewState.shared
     
-    init(authorizationStatus: CLAuthorizationStatus = .authorizedWhenInUse) {
-        self.authorizationStatus = authorizationStatus
+    override init() {
+        super.init()
+        manager.delegate = self
+        checkLocationAuthorization()
     }
     
     func checkLocationAuthorization() {
-        manager.delegate = self
-        manager.startUpdatingLocation()
+        self.authorizationStatus = manager.authorizationStatus
         
         switch manager.authorizationStatus {
         case .notDetermined:
@@ -40,12 +41,13 @@ class LocationManager: NSObject, CLLocationManagerDelegate, ObservableObject, Lo
             manager.startUpdatingLocation()
             
         default:
-            break
-        
+
+            manager.stopUpdatingLocation()
         }
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        self.authorizationStatus = manager.authorizationStatus
         checkLocationAuthorization()
     }
     

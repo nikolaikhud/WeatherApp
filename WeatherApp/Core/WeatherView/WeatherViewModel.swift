@@ -140,6 +140,7 @@ class WeatherViewModel: ObservableObject {
             locationManager.authorizationStatus == .authorizedAlways
         {
             // Do nothing
+            print("do nothing")
         } else if let search = recentSearchesDataService.recentSearches.last {
             // Update with recent search
             updateWeather(name: search.name ?? "", state: search.state ?? "", cityState: search.cityState ?? "", lat: search.lat, lon: search.lon)
