@@ -11,7 +11,7 @@ import CoreLocation
 
 class WeatherViewModel: ObservableObject {
     
-    private let locationManager: LocationManagerProtocol
+    private let _locationManager: LocationManagerProtocol?
     private let locationsDataService: LocationDataServiceProtocol
     private let currentWeatherDataService: CurrentWeatherDataServiceProtocol
     private let forecastDataService: ForecastDataServiceProtocol
@@ -22,13 +22,21 @@ class WeatherViewModel: ObservableObject {
     @Published var cityState = "–"
     @Published var tempString: String?
     
-    init(locationManager: LocationManagerProtocol = LocationManager(),
+    private lazy var locationManager: LocationManagerProtocol = {
+        if let locationManager = _locationManager {
+            return locationManager
+        } else {
+            return LocationManager()
+        }
+    }()
+    
+    init(locationManager: LocationManagerProtocol? = nil,
          locationsDataService: LocationDataServiceProtocol = LocationsDataService(),
          currentWeatherDataService: CurrentWeatherDataServiceProtocol = CurrentWeatherDataService(),
          forecastDataService: ForecastDataServiceProtocol = ForecastDataService(),
          recentSearchesDataService: RecentSearchesDataServiceProtocol = RecentSearchesDataService.shared)
     {
-        self.locationManager = locationManager
+        self._locationManager = locationManager
         self.locationsDataService = locationsDataService
         self.currentWeatherDataService = currentWeatherDataService
         self.forecastDataService = forecastDataService
@@ -43,7 +51,6 @@ class WeatherViewModel: ObservableObject {
     private func addSubscribers() {
         currentWeatherSubscriber()
         forecastSubscriber()
-        lastKnownLocationSubscriber()
         locationSubscriber()
     }
     
@@ -136,14 +143,11 @@ class WeatherViewModel: ObservableObject {
     }
     
     private func shouldWeatherBeUpdated() {
-        if locationManager.authorizationStatus == .authorizedWhenInUse ||
-            locationManager.authorizationStatus == .authorizedAlways
-        {
-            // Do nothing
-            print("do nothing")
-        } else if let search = recentSearchesDataService.recentSearches.last {
+        if let search = recentSearchesDataService.recentSearches.last {
             // Update with recent search
             updateWeather(name: search.name ?? "", state: search.state ?? "", cityState: search.cityState ?? "", lat: search.lat, lon: search.lon)
+        } else {
+            lastKnownLocationSubscriber()
         }
     }
 }

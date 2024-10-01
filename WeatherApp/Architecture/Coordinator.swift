@@ -12,14 +12,11 @@ class AppCoordinator: ObservableObject {
     // MARK: navigation and viewModels initialization
     @Published var isShowingSearchView = false
     
-    let locationManager = LocationManager()
     var weatherViewModel: WeatherViewModel
     var searchViewModel: SearchViewModel?
     
     init() {
-        let locationManager = LocationManager()
-        self.weatherViewModel = WeatherViewModel(locationManager: locationManager)
-        locationManager.checkLocationAuthorization()
+        self.weatherViewModel = WeatherViewModel()
         viewStateSubscriber()
     }
     
